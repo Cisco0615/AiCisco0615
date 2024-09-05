@@ -1,0 +1,645 @@
+```html
+<html><head><base href="https://websim.io/global-cybersecurity/"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"><link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>全球資安攻防戰</title>
+<style>
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    background-color: #000033;
+    color: #00ffff;
+    height: 100%;
+    overflow: hidden;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-image: url('https://images.unsplash.com/photo-1534996858221-380b92700493?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80');
+    background-size: cover;
+    background-position: center;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 51, 0.7);
+    z-index: 1;
+}
+
+header {
+    background-color: rgba(0, 0, 102, 0.8);
+    padding: 10px;
+    text-align: center;
+    border-bottom: 2px solid #00ffff;
+    z-index: 10;
+}
+
+h1 {
+    margin: 0;
+    font-size: 24px;
+    text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff;
+}
+
+.main-content {
+    display: flex;
+    flex-grow: 1;
+    position: relative;
+    z-index: 2;
+}
+
+.control-panel {
+    width: 250px;
+    background-color: rgba(0, 0, 102, 0.8);
+    padding: 10px;
+    overflow-y: auto;
+    z-index: 10;
+}
+
+.world-map {
+    flex-grow: 1;
+    position: relative;
+    overflow: hidden;
+    background-color: transparent;
+}
+
+#map {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #000066;
+    color: #00ffff;
+    border: 1px solid #00ffff;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 0 10px #00ffff;
+}
+
+button:hover {
+    background-color: #0000aa;
+    box-shadow: 0 0 20px #00ffff;
+}
+
+.country {
+    fill: rgba(0, 255, 255, 0.1);
+    stroke: rgba(0, 255, 255, 0.4);
+    stroke-width: 0.5;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.country:hover {
+    fill: rgba(0, 255, 255, 0.3);
+    stroke: #00ffff;
+}
+
+.attack-line {
+    stroke: #ff00ff;
+    stroke-width: 2;
+    stroke-dasharray: 5;
+    animation: dash 0.5s linear infinite;
+}
+
+.attack-path {
+    stroke: #ff00ff;
+    stroke-width: 2;
+    fill: none;
+    animation: neon-pulse 1s ease-in-out infinite alternate;
+}
+
+.defense-path {
+    stroke: #00ff00;
+    stroke-width: 2;
+    fill: none;
+    animation: neon-pulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes dash {
+    to {
+        stroke-dashoffset: -10;
+    }
+}
+
+.defense-circle {
+    fill: none;
+    stroke: #00f;
+    stroke-width: 2;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(3);
+        opacity: 0;
+    }
+}
+
+.alert-box {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background-color: rgba(0, 0, 102, 0.8);
+    border: 1px solid #00ffff;
+    padding: 10px;
+    color: #00ffff;
+    max-width: 300px;
+    z-index: 100;
+    font-size: 14px;
+    box-shadow: 0 0 20px #00ffff;
+}
+
+.status-panel {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(0, 0, 102, 0.8);
+    border: 1px solid #00ffff;
+    padding: 10px;
+    color: #00ffff;
+    z-index: 100;
+}
+
+.status-item {
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.status-value {
+    font-weight: bold;
+    color: #ff00ff;
+}
+
+.game-score {
+    position: absolute;
+    top: 10px;
+    left: 270px;
+    background-color: rgba(0, 0, 102, 0.8);
+    border: 1px solid #00ffff;
+    padding: 10px;
+    color: #00ffff;
+    z-index: 100;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.country-label {
+    fill: #00ffff;
+    font-size: 10px;
+    font-weight: bold;
+    text-anchor: middle;
+    pointer-events: none;
+    text-shadow: 0 0 5px #00ffff;
+}
+
+@keyframes neon-pulse {
+    from {
+        filter: drop-shadow(0 0 2px currentColor);
+    }
+    to {
+        filter: drop-shadow(0 0 10px currentColor);
+    }
+}
+</style>
+</head>
+<body>
+<div class="overlay"></div>
+<div class="container">
+    <header>
+        <h1>全球資安攻防戰</h1>
+    </header>
+    <div class="main-content">
+        <div class="control-panel">
+            <button onclick="launchAttack()">發動攻擊</button>
+            <button onclick="strengthenDefense()">強化防禦</button>
+            <button onclick="scanVulnerabilities()">掃描漏洞</button>
+            <button onclick="deployFirewall()">部署防火牆</button>
+            <button onclick="initiateCountermeasures()">啟動反制措施</button>
+            <button onclick="developAI()">開發AI防禦系統</button>
+            <button onclick="hackSatellite()">黑入衛星系統</button>
+            <button onclick="launchPhishingCampaign()">發起釣魚攻擊</button>
+            <button onclick="toggleAIMode()">切換AI戰略模式</button>
+        </div>
+        <div class="world-map">
+            <div id="google-map" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></div>
+            <svg id="map" viewBox="0 0 1000 500">
+                <rect id="taiwan" class="country" x="870" y="230" width="10" height="10" />
+                <text x="875" y="235" class="country-label">台灣</text>
+                
+                <rect id="china" class="country" x="800" y="180" width="60" height="60" />
+                <text x="830" y="210" class="country-label">中國</text>
+                
+                <rect id="usa" class="country" x="200" y="180" width="70" height="40" />
+                <text x="235" y="200" class="country-label">美國</text>
+                
+                <rect id="russia" class="country" x="750" y="100" width="150" height="60" />
+                <text x="825" y="130" class="country-label">俄羅斯</text>
+                
+                <rect id="india" class="country" x="750" y="240" width="40" height="30" />
+                <text x="770" y="260" class="country-label">印度</text>
+                
+                <rect id="brazil" class="country" x="350" y="320" width="40" height="40" />
+                <text x="370" y="340" class="country-label">巴西</text>
+                
+                <rect id="germany" class="country" x="510" y="150" width="20" height="15" />
+                <text x="520" y="160" class="country-label">德國</text>
+                
+                <rect id="france" class="country" x="490" y="160" width="20" height="15" />
+                <text x="500" y="170" class="country-label">法國</text>
+                
+                <rect id="uk" class="country" x="470" y="140" width="10" height="10" />
+                <text x="475" y="150" class="country-label">英國</text>
+                
+                <rect id="japan" class="country" x="890" y="190" width="20" height="20" />
+                <text x="895" y="200" class="country-label">日本</text>
+                
+                <rect id="canada" class="country" x="220" y="120" width="60" height="40" />
+                <text x="250" y="140" class="country-label">加拿大</text>
+                
+                <rect id="south-africa" class="country" x="540" y="380" width="30" height="20" />
+                <text x="555" y="390" class="country-label">南非</text>
+                
+                <rect id="mexico" class="country" x="220" y="230" width="30" height="20" />
+                <text x="235" y="240" class="country-label">墨西哥</text>
+                
+                <rect id="italy" class="country" x="520" y="180" width="15" height="15" />
+                <text x="525" y="190" class="country-label">意大利</text>
+                
+                <rect id="spain" class="country" x="470" y="190" width="20" height="15" />
+                <text x="480" y="200" class="country-label">西班牙</text>
+                
+                <rect id="argentina" class="country" x="320" y="400" width="20" height="30" />
+                <text x="330" y="415" class="country-label">阿根廷</text>
+                
+                <rect id="south-korea" class="country" x="870" y="200" width="10" height="10" />
+                <text x="875" y="205" class="country-label">韓國</text>
+                
+                <rect id="nigeria" class="country" x="500" y="290" width="30" height="20" />
+                <text x="515" y="300" class="country-label">奈及利亞</text>
+                
+                <rect id="philippines" class="country" x="870" y="270" width="20" height="20" />
+                <text x="880" y="280" class="country-label">菲律賓</text>
+                
+                <rect id="turkey" class="country" x="570" y="200" width="30" height="20" />
+                <text x="585" y="210" class="country-label">土耳其</text>
+                
+                <rect id="indonesia" class="country" x="820" y="320" width="40" height="20" />
+                <text x="840" y="330" class="country-label">印度尼西亞</text>
+                
+                <rect id="pakistan" class="country" x="700" y="230" width="30" height="20" />
+                <text x="715" y="240" class="country-label">巴基斯坦</text>
+                
+                <rect id="colombia" class="country" x="280" y="290" width="20" height="20" />
+                <text x="290" y="300" class="country-label">哥倫比亞</text>
+                
+                <rect id="venezuela" class="country" x="300" y="270" width="20" height="15" />
+                <text x="310" y="275" class="country-label">委內瑞拉</text>
+                
+                <rect id="peru" class="country" x="280" y="320" width="20" height="20" />
+                <text x="290" y="325" class="country-label">秘魯</text>
+                
+                <rect id="chile" class="country" x="290" y="380" width="10" height="40" />
+                <text x="295" y="410" class="country-label">智利</text>
+                
+                <rect id="ecuador" class="country" x="260" y="300" width="15" height="15" />
+                <text x="265" y="310" class="country-label">厄瓜多爾</text>
+                
+                <rect id="morocco" class="country" x="460" y="220" width="20" height="20" />
+                <text x="470" y="235" class="country-label">摩洛哥</text>
+                
+                <rect id="egypt" class="country" x="570" y="240" width="30" height="20" />
+                <text x="585" y="250" class="country-label">埃及</text>
+                
+                <rect id="angola" class="country" x="530" y="340" width="20" height="20" />
+                <text x="540" y="355" class="country-label">安哥拉</text>
+                
+                <rect id="ukraine" class="country" x="570" y="160" width="30" height="20" />
+                <text x="585" y="170" class="country-label">烏克蘭</text>
+                
+                <rect id="saudi-arabia" class="country" x="610" y="240" width="40" height="30" />
+                <text x="630" y="255" class="country-label">沙特阿拉伯</text>
+                
+            </svg>
+        </div>
+    </div>
+    <div class="status-panel">
+        <div class="status-item">全球安全指數: <span id="security-index" class="status-value">75%</span></div>
+        <div class="status-item">活躍威脅: <span id="active-threats" class="status-value">12</span></div>
+        <div class="status-item">防禦強度: <span id="defense-strength" class="status-value">中等</span></div>
+    </div>
+    <div class="game-score">
+        得分: <span id="score">0</span>
+    </div>
+</div>
+
+<script>
+function initMap() {
+    const map = new google.maps.Map(document.getElementById('google-map'), {
+        center: { lat: 20, lng: 0 },
+        zoom: 2,
+        disableDefaultUI: true,
+        styles: [
+            {
+                elementType: 'geometry',
+                stylers: [{ color: '#000033' }]
+            },
+            {
+                elementType: 'labels',
+                stylers: [{ visibility: 'off' }]
+            },
+            {
+                featureType: 'water',
+                elementType: 'geometry',
+                stylers: [{ color: '#000066' }]
+            }
+        ]
+    });
+}
+
+const map = document.getElementById('map');
+const countries = document.querySelectorAll('.country');
+const countryLabels = document.querySelectorAll('.country-label');
+let selectedCountry = null;
+let score = 0;
+let aiModeActive = false;
+
+function getRandomCountry() {
+    return countries[Math.floor(Math.random() * countries.length)];
+}
+
+function createSVGElement(type) {
+    return document.createElementNS("http://www.w3.org/2000/svg", type);
+}
+
+function getCountryCenter(country) {
+    const rect = country.getBBox();
+    return {
+        x: rect.x + rect.width / 2,
+        y: rect.y + rect.height / 2
+    };
+}
+
+function createPath(start, end, type) {
+    const path = createSVGElement('path');
+    const midX = (start.x + end.x) / 2;
+    const midY = (start.y + end.y) / 2;
+    const controlX = midX + (Math.random() - 0.5) * 100;
+    const controlY = midY + (Math.random() - 0.5) * 100;
+    const d = `M${start.x},${start.y} Q${controlX},${controlY} ${end.x},${end.y}`;
+    path.setAttribute('d', d);
+    path.classList.add(`${type}-path`);
+    path.style.strokeDasharray = '5,5';
+    map.appendChild(path);
+    return path;
+}
+
+function launchMultipleAttacks(count = 3) {
+    for (let i = 0; i < count; i++) {
+        const source = getRandomCountry();
+        const target = getRandomCountry();
+        
+        if (source !== target) {
+            const sourceCenter = getCountryCenter(source);
+            const targetCenter = getCountryCenter(target);
+
+            const attackPath = createPath(sourceCenter, targetCenter, 'attack');
+
+            setTimeout(() => {
+                map.removeChild(attackPath);
+                showAlert(`攻擊從${source.id}發起，目標為${target.id}`);
+            }, 2000);
+        }
+    }
+    updateStatus('security-index', (Math.random() * 10 + 65).toFixed(1) + '%');
+    updateStatus('active-threats', Math.floor(Math.random() * 10 + 8));
+    updateScore(50);
+}
+
+function strengthenMultipleDefenses(count = 3) {
+    for (let i = 0; i < count; i++) {
+        const country = getRandomCountry();
+        const center = getCountryCenter(country);
+
+        const defensePaths = [];
+        for (let j = 0; j < 2; j++) {
+            const otherCountry = getRandomCountry();
+            if (otherCountry !== country) {
+                const otherCenter = getCountryCenter(otherCountry);
+                defensePaths.push(createPath(center, otherCenter, 'defense'));
+            }
+        }
+
+        setTimeout(() => {
+            defensePaths.forEach(path => map.removeChild(path));
+            showAlert(`${country.id}的防禦系統已加強`);
+        }, 2000);
+    }
+    updateStatus('defense-strength', '高');
+    updateScore(30);
+}
+
+function autoAttackDefense() {
+    setInterval(() => {
+        const action = Math.random() > 0.5 ? 'attack' : 'defense';
+        
+        if (action === 'attack') {
+            launchMultipleAttacks();
+        } else {
+            strengthenMultipleDefenses();
+        }
+    }, 5000); // Run every 5 seconds
+}
+
+// Update the existing functions to use the new multiple attack/defense functions
+function launchAttack() {
+    launchMultipleAttacks();
+}
+
+function strengthenDefense() {
+    strengthenMultipleDefenses();
+}
+
+function scanVulnerabilities() {
+    countries.forEach(country => {
+        const originalStroke = country.style.stroke;
+        country.style.stroke = '#ff00ff';
+        country.style.filter = 'drop-shadow(0 0 5px #ff00ff)';
+        setTimeout(() => {
+            country.style.stroke = originalStroke;
+            country.style.filter = 'none';
+        }, 2000);
+    });
+    showAlert('全球漏洞掃描完成，發現多個潛在風險');
+    updateStatus('active-threats', Math.floor(Math.random() * 5 + 15));
+    updateScore(20);
+}
+
+function deployFirewall() {
+    const country = selectedCountry || getRandomCountry();
+    const originalStroke = country.style.stroke;
+    country.style.stroke = '#00ffff';
+    country.style.strokeWidth = '3';
+    country.style.filter = 'drop-shadow(0 0 10px #00ffff)';
+    setTimeout(() => {
+        country.style.stroke = originalStroke;
+        country.style.strokeWidth = selectedCountry === country ? '3' : '0.5';
+        country.style.filter = 'none';
+        showAlert(`${country.id}已成功部署新的防火牆`);
+        updateStatus('defense-strength', '極高');
+        updateScore(40);
+    }, 2000);
+}
+
+function initiateCountermeasures() {
+    const lines = [];
+    countries.forEach(country => {
+        const center = getCountryCenter(country);
+        const line = createSVGElement('line');
+        line.setAttribute('x1', center.x);
+        line.setAttribute('y1', center.y);
+        line.setAttribute('x2', center.x);
+        line.setAttribute('y2', center.y - 20);
+        line.style.stroke = '#0ff';
+        line.style.strokeWidth = '2';
+        map.appendChild(line);
+        lines.push(line);
+    });
+    showAlert('全球反制措施已啟動，阻擋潛在威脅');
+    updateStatus('active-threats', Math.floor(Math.random() * 3 + 5));
+    updateScore(60);
+    setTimeout(() => {
+        lines.forEach(line => map.removeChild(line));
+    }, 2000);
+}
+
+function developAI() {
+    showAlert('正在開發先進的AI防禦系統...');
+    const randomDelay = Math.floor(Math.random() * 3000) + 2000;
+    setTimeout(() => {
+        showAlert('AI防禦系統開發完成並部署成功！');
+        updateStatus('security-index', '95%');
+        updateStatus('defense-strength', '超強');
+        updateScore(100);
+    }, randomDelay);
+}
+
+function hackSatellite() {
+    showAlert('正在嘗試黑入敵方衛星系統...');
+    const success = Math.random() > 0.5;
+    setTimeout(() => {
+        if (success) {
+            showAlert('成功黑入敵方衛星！獲得寶貴情報。');
+            updateScore(150);
+        } else {
+            showAlert('黑入衛星失敗，被敵方發現！安全指數下降。');
+            updateStatus('security-index', (Math.random() * 10 + 55).toFixed(1) + '%');
+        }
+    }, 3000);
+}
+
+function launchPhishingCampaign() {
+    showAlert('正在準備大規模釣魚攻擊活動...');
+    setTimeout(() => {
+        const success = Math.random() > 0.3;
+        if (success) {
+            showAlert('釣魚攻擊成功！獲得大量敏感信息。');
+            updateScore(80);
+            updateStatus('active-threats', Math.floor(Math.random() * 5 + 20));
+        } else {
+            showAlert('釣魚攻擊被識破，防禦系統得到加強。');
+            updateStatus('defense-strength', '極高');
+        }
+    }, 2500);
+}
+
+function showAlert(message) {
+    const alertBox = document.createElement('div');
+    alertBox.classList.add('alert-box');
+    alertBox.textContent = message;
+    document.body.appendChild(alertBox);
+    setTimeout(() => {
+        document.body.removeChild(alertBox);
+    }, 3000);
+}
+
+function updateStatus(id, value) {
+    document.getElementById(id).textContent = value;
+}
+
+function updateScore(points) {
+    score += points;
+    document.getElementById('score').textContent = score;
+}
+
+function updateCountrySelection(country) {
+    if (selectedCountry) {
+        selectedCountry.style.fill = 'none';
+        selectedCountry.style.strokeWidth = '0.5';
+        selectedCountry.nextElementSibling.style.fontSize = '10px';
+    }
+    selectedCountry = country;
+    country.style.fill = 'rgba(255, 255, 255, 0.2)';
+    country.style.strokeWidth = '1';
+    country.nextElementSibling.style.fontSize = '12px';
+    showAlert(`已選擇${country.nextElementSibling.textContent}作為操作目標`);
+}
+
+countries.forEach((country, index) => {
+    country.addEventListener('click', () => {
+        updateCountrySelection(country);
+    });
+
+    country.addEventListener('mouseover', () => {
+        if (country !== selectedCountry) {
+            country.style.fill = 'rgba(255, 255, 255, 0.1)';
+            country.style.strokeWidth = '0.75';
+            countryLabels[index].style.fontSize = '11px';
+        }
+    });
+
+    country.addEventListener('mouseout', () => {
+        if (country !== selectedCountry) {
+            country.style.fill = 'none';
+            country.style.strokeWidth = '0.5';
+            countryLabels[index].style.fontSize = '10px';
+        }
+    });
+});
+
+countryLabels.forEach((label, index) => {
+    label.addEventListener('click', () => {
+        updateCountrySelection(countries[index]);
+    });
+});
+
+// 初始化狀態
+updateStatus('security-index', '75%');
+updateStatus('active-threats', '12');
+updateStatus('defense-strength', '中等');
+
+// Start automatic attack and defense
+autoAttackDefense();
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
+</body>
+</html>
+```
